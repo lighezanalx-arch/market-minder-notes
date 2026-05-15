@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WithdrawalsRouteImport } from './routes/withdrawals'
+import { Route as StrategiesRouteImport } from './routes/strategies'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as EquityRouteImport } from './routes/equity'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const WithdrawalsRoute = WithdrawalsRouteImport.update({
   id: '/withdrawals',
   path: '/withdrawals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StrategiesRoute = StrategiesRouteImport.update({
+  id: '/strategies',
+  path: '/strategies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/equity': typeof EquityRoute
   '/journal': typeof JournalRoute
   '/settings': typeof SettingsRoute
+  '/strategies': typeof StrategiesRoute
   '/withdrawals': typeof WithdrawalsRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/equity': typeof EquityRoute
   '/journal': typeof JournalRoute
   '/settings': typeof SettingsRoute
+  '/strategies': typeof StrategiesRoute
   '/withdrawals': typeof WithdrawalsRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/equity': typeof EquityRoute
   '/journal': typeof JournalRoute
   '/settings': typeof SettingsRoute
+  '/strategies': typeof StrategiesRoute
   '/withdrawals': typeof WithdrawalsRoute
 }
 export interface FileRouteTypes {
@@ -80,9 +89,17 @@ export interface FileRouteTypes {
     | '/equity'
     | '/journal'
     | '/settings'
+    | '/strategies'
     | '/withdrawals'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar' | '/equity' | '/journal' | '/settings' | '/withdrawals'
+  to:
+    | '/'
+    | '/calendar'
+    | '/equity'
+    | '/journal'
+    | '/settings'
+    | '/strategies'
+    | '/withdrawals'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/equity'
     | '/journal'
     | '/settings'
+    | '/strategies'
     | '/withdrawals'
   fileRoutesById: FileRoutesById
 }
@@ -99,6 +117,7 @@ export interface RootRouteChildren {
   EquityRoute: typeof EquityRoute
   JournalRoute: typeof JournalRoute
   SettingsRoute: typeof SettingsRoute
+  StrategiesRoute: typeof StrategiesRoute
   WithdrawalsRoute: typeof WithdrawalsRoute
 }
 
@@ -109,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/withdrawals'
       fullPath: '/withdrawals'
       preLoaderRoute: typeof WithdrawalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strategies': {
+      id: '/strategies'
+      path: '/strategies'
+      fullPath: '/strategies'
+      preLoaderRoute: typeof StrategiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -155,8 +181,19 @@ const rootRouteChildren: RootRouteChildren = {
   EquityRoute: EquityRoute,
   JournalRoute: JournalRoute,
   SettingsRoute: SettingsRoute,
+  StrategiesRoute: StrategiesRoute,
   WithdrawalsRoute: WithdrawalsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
