@@ -45,6 +45,7 @@ function SettingsPage() {
           startingBalance: parsed.startingBalance ?? 0,
           days: parsed.days ?? {},
           withdrawals: parsed.withdrawals ?? [],
+          strategies: parsed.strategies ?? [],
         });
         setBal(String(parsed.startingBalance ?? 0));
       } catch {
