@@ -234,6 +234,7 @@ export const actions = {
       );
     });
   },
+  replaceAll(next: DB) {
     setDB(next);
   },
 };
