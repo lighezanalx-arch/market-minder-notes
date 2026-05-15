@@ -35,10 +35,19 @@ export type Withdrawal = {
   note: string;
 };
 
+export type Strategy = {
+  id: string;
+  name: string;
+  notes: string;
+  photos: Photo[];
+  created: string;
+};
+
 export type DB = {
   startingBalance: number;
   days: Record<string, Day>;
   withdrawals: Withdrawal[];
+  strategies: Strategy[];
 };
 
 const KEY = "trading_journal_v1";
