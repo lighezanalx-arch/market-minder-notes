@@ -35,16 +35,25 @@ export type Withdrawal = {
   note: string;
 };
 
+export type Strategy = {
+  id: string;
+  name: string;
+  notes: string;
+  photos: Photo[];
+  created: string;
+};
+
 export type DB = {
   startingBalance: number;
   days: Record<string, Day>;
   withdrawals: Withdrawal[];
+  strategies: Strategy[];
 };
 
 const KEY = "trading_journal_v1";
 const LEGACY_KEY = "es_journal_v2";
 
-const empty = (): DB => ({ startingBalance: 0, days: {}, withdrawals: [] });
+const empty = (): DB => ({ startingBalance: 0, days: {}, withdrawals: [], strategies: [] });
 
 function load(): DB {
   if (typeof window === "undefined") return empty();
@@ -56,13 +65,14 @@ function load(): DB {
         startingBalance: parsed.startingBalance ?? 0,
         days: parsed.days ?? {},
         withdrawals: parsed.withdrawals ?? [],
+        strategies: parsed.strategies ?? [],
       };
     }
     // migrate legacy
     const legacy = localStorage.getItem(LEGACY_KEY);
     if (legacy) {
       const p = JSON.parse(legacy);
-      return { startingBalance: 0, days: p.days ?? {}, withdrawals: [] };
+      return { startingBalance: 0, days: p.days ?? {}, withdrawals: [], strategies: [] };
     }
   } catch {
     /* ignore */
@@ -99,6 +109,7 @@ function update(mutator: (s: DB) => void) {
     startingBalance: state.startingBalance,
     days: { ...state.days },
     withdrawals: [...state.withdrawals],
+    strategies: [...state.strategies],
   };
   mutator(next);
   state = next;
@@ -188,6 +199,39 @@ export const actions = {
   deleteWithdrawal(id: string) {
     update((s) => {
       s.withdrawals = s.withdrawals.filter((w) => w.id !== id);
+    });
+  },
+  addStrategy(s: Strategy) {
+    update((db) => {
+      db.strategies = [...db.strategies, s];
+    });
+  },
+  updateStrategy(id: string, patch: Partial<Omit<Strategy, "id" | "created">>) {
+    update((db) => {
+      db.strategies = db.strategies.map((s) =>
+        s.id === id ? { ...s, ...patch } : s,
+      );
+    });
+  },
+  deleteStrategy(id: string) {
+    update((db) => {
+      db.strategies = db.strategies.filter((s) => s.id !== id);
+    });
+  },
+  addStrategyPhoto(id: string, photo: Photo) {
+    update((db) => {
+      db.strategies = db.strategies.map((s) =>
+        s.id === id ? { ...s, photos: [...s.photos, photo] } : s,
+      );
+    });
+  },
+  deleteStrategyPhoto(id: string, photoId: string) {
+    update((db) => {
+      db.strategies = db.strategies.map((s) =>
+        s.id === id
+          ? { ...s, photos: s.photos.filter((p) => p.id !== photoId) }
+          : s,
+      );
     });
   },
   replaceAll(next: DB) {

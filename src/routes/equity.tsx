@@ -56,7 +56,7 @@ function EquityPage() {
       </header>
 
       <div className="scrollbar-thin flex-1 overflow-y-auto p-6">
-        <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-5">
+        <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-6">
           <Stat label="Starting" value={formatMoney(db.startingBalance, false)} />
           <Stat
             label="Current"
@@ -74,6 +74,11 @@ function EquityPage() {
             label="Drawdown from peak"
             value={`${drawdown.toFixed(2)}%`}
             tone={drawdown > 0 ? "loss" : undefined}
+          />
+          <Stat
+            label="Total withdrawn"
+            value={formatMoney(t.totalWithdrawn, false)}
+            tone={t.totalWithdrawn > 0 ? "loss" : undefined}
           />
         </div>
 
@@ -154,6 +159,72 @@ function EquityPage() {
             tone="loss"
           />
         </div>
+
+        {db.withdrawals.length > 0 && (
+          <div className="mt-6">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Withdrawals
+            </h2>
+            <div className="overflow-hidden rounded-lg border border-border bg-card">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-surface text-left text-[11px] uppercase tracking-wider text-muted-foreground">
+                    <th className="px-3 py-2 font-medium">Date</th>
+                    <th className="px-3 py-2 font-medium">Amount</th>
+                    <th className="px-3 py-2 font-medium">Commissions</th>
+                    <th className="px-3 py-2 font-medium">Total impact</th>
+                    <th className="px-3 py-2 font-medium">Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...db.withdrawals]
+                    .sort((a, b) => b.date.localeCompare(a.date))
+                    .map((w) => (
+                      <tr
+                        key={w.id}
+                        className="border-b border-border last:border-0"
+                      >
+                        <td className="num px-3 py-2">{w.date}</td>
+                        <td className="num px-3 py-2 text-loss">
+                          -${w.amount.toFixed(2)}
+                        </td>
+                        <td className="num px-3 py-2 text-loss">
+                          {w.commissions ? `-$${w.commissions.toFixed(2)}` : "—"}
+                        </td>
+                        <td className="num px-3 py-2 font-semibold text-loss">
+                          -${(w.amount + w.commissions).toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 text-muted-foreground">
+                          {w.note || "—"}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+                <tfoot>
+                  <tr className="bg-surface text-[11px] uppercase tracking-wider text-muted-foreground">
+                    <td className="px-3 py-2 font-medium">Total</td>
+                    <td className="num px-3 py-2 text-loss">
+                      -$
+                      {db.withdrawals
+                        .reduce((s, w) => s + w.amount, 0)
+                        .toFixed(2)}
+                    </td>
+                    <td className="num px-3 py-2 text-loss">
+                      -$
+                      {db.withdrawals
+                        .reduce((s, w) => s + w.commissions, 0)
+                        .toFixed(2)}
+                    </td>
+                    <td className="num px-3 py-2 font-semibold text-loss">
+                      -${t.totalWithdrawn.toFixed(2)}
+                    </td>
+                    <td />
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

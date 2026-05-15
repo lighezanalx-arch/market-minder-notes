@@ -5,10 +5,12 @@ import {
   Calendar as CalendarIcon,
   ArrowDownToLine,
   Settings as SettingsIcon,
+  Lightbulb,
 } from "lucide-react";
 import { useDB, currentBalance, totals, formatMoney } from "@/lib/store";
 
 const nav = [
+  { to: "/strategies", label: "Strategies", icon: Lightbulb },
   { to: "/journal", label: "Journal", icon: BookOpen },
   { to: "/equity", label: "Equity", icon: TrendingUp },
   { to: "/calendar", label: "Calendar", icon: CalendarIcon },
