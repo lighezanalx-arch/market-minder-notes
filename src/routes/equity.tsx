@@ -115,7 +115,7 @@ function EquityPage() {
                       fontSize: 12,
                     }}
                     labelStyle={{ color: "oklch(0.65 0.015 250)" }}
-                    formatter={(v: number) => [formatMoney(v, false), "Balance"]}
+                    formatter={(v) => [formatMoney(Number(v), false), "Balance"]}
                   />
                   <ReferenceLine
                     y={db.startingBalance}
