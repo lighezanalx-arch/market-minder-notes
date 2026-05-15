@@ -53,7 +53,7 @@ export type DB = {
 const KEY = "trading_journal_v1";
 const LEGACY_KEY = "es_journal_v2";
 
-const empty = (): DB => ({ startingBalance: 0, days: {}, withdrawals: [] });
+const empty = (): DB => ({ startingBalance: 0, days: {}, withdrawals: [], strategies: [] });
 
 function load(): DB {
   if (typeof window === "undefined") return empty();
@@ -65,13 +65,14 @@ function load(): DB {
         startingBalance: parsed.startingBalance ?? 0,
         days: parsed.days ?? {},
         withdrawals: parsed.withdrawals ?? [],
+        strategies: parsed.strategies ?? [],
       };
     }
     // migrate legacy
     const legacy = localStorage.getItem(LEGACY_KEY);
     if (legacy) {
       const p = JSON.parse(legacy);
-      return { startingBalance: 0, days: p.days ?? {}, withdrawals: [] };
+      return { startingBalance: 0, days: p.days ?? {}, withdrawals: [], strategies: [] };
     }
   } catch {
     /* ignore */
