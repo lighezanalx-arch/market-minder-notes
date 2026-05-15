@@ -345,7 +345,7 @@ function StrategiesPage() {
       )}
 
       {lightbox && (
-        <Lightbox photo={lightbox} onClose={() => setLightbox(null)} />
+        <Lightbox src={lightbox.image} onClose={() => setLightbox(null)} />
       )}
     </div>
   );
