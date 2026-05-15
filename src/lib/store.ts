@@ -109,6 +109,7 @@ function update(mutator: (s: DB) => void) {
     startingBalance: state.startingBalance,
     days: { ...state.days },
     withdrawals: [...state.withdrawals],
+    strategies: [...state.strategies],
   };
   mutator(next);
   state = next;
