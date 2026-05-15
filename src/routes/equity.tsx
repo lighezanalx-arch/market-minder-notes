@@ -56,7 +56,7 @@ function EquityPage() {
       </header>
 
       <div className="scrollbar-thin flex-1 overflow-y-auto p-6">
-        <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-5">
+        <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-6">
           <Stat label="Starting" value={formatMoney(db.startingBalance, false)} />
           <Stat
             label="Current"
@@ -74,6 +74,11 @@ function EquityPage() {
             label="Drawdown from peak"
             value={`${drawdown.toFixed(2)}%`}
             tone={drawdown > 0 ? "loss" : undefined}
+          />
+          <Stat
+            label="Total withdrawn"
+            value={formatMoney(t.totalWithdrawn, false)}
+            tone={t.totalWithdrawn > 0 ? "loss" : undefined}
           />
         </div>
 
