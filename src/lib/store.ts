@@ -201,7 +201,39 @@ export const actions = {
       s.withdrawals = s.withdrawals.filter((w) => w.id !== id);
     });
   },
-  replaceAll(next: DB) {
+  addStrategy(s: Strategy) {
+    update((db) => {
+      db.strategies = [...db.strategies, s];
+    });
+  },
+  updateStrategy(id: string, patch: Partial<Omit<Strategy, "id" | "created">>) {
+    update((db) => {
+      db.strategies = db.strategies.map((s) =>
+        s.id === id ? { ...s, ...patch } : s,
+      );
+    });
+  },
+  deleteStrategy(id: string) {
+    update((db) => {
+      db.strategies = db.strategies.filter((s) => s.id !== id);
+    });
+  },
+  addStrategyPhoto(id: string, photo: Photo) {
+    update((db) => {
+      db.strategies = db.strategies.map((s) =>
+        s.id === id ? { ...s, photos: [...s.photos, photo] } : s,
+      );
+    });
+  },
+  deleteStrategyPhoto(id: string, photoId: string) {
+    update((db) => {
+      db.strategies = db.strategies.map((s) =>
+        s.id === id
+          ? { ...s, photos: s.photos.filter((p) => p.id !== photoId) }
+          : s,
+      );
+    });
+  },
     setDB(next);
   },
 };
